@@ -132,7 +132,7 @@ if (Meteor.isClient) {
             } else {
                 Session.set("selected_product", this.prodID);
                 Session.set('curQty', $('td:last',e.currentTarget)[0].innerText);
-                console.log('template = ',t)
+                console.log('template data = ', t.data)
             }
         }
     });
@@ -142,13 +142,11 @@ if (Meteor.isClient) {
         insertTrxForm: {
             before: {
                 insert: function( doc, template) {
-//                    console.info('default doc: ',doc);
                     doc.prodID = Session.get("selected_product") || "[missing]";
                     doc.curqty = Session.get('curQty') - doc.qty
                     mdate = moment(doc.trxDate)
                     doc.trxDate = mdate.add(mdate.zone(), 'm').toDate()  //adjust TZ
                     Session.set('current_name', doc.enteredBy);
-//                    console.info('updated doc: ',doc);
                     return doc;
                 }
             },
