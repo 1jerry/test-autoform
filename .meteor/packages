@@ -6,12 +6,6 @@
 meteor-platform
 autopublish
 insecure
-jquery
 aldeed:autoform
 aldeed:collection2
-less
-mizzao:bootstrap-3
 mrt:moment
-raix:handlebar-helpers
-aldeed:template-extension
-

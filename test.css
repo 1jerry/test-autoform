@@ -1,0 +1,76 @@
+/*noinspection CssUnknownProperty*/
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 200;
+    margin: 50px 0;
+    padding: 0;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+div.table {
+    max-width: 800px;
+    margin: 0 auto;
+}
+div.table.wider {
+    max-width: 1000px;
+}
+
+tr.selected td, table.pretty>tr.selected td, table.pretty tr.selected:nth-child(odd) td{
+    background-color: yellow;
+    font-size: larger;
+    font-weight: bold;}
+
+.details, .none {
+    font-weight: bold;
+    font-size: 2em;
+    border-style: dashed none none none;
+    border-color: #ccc;
+    border-width: 4px;
+    margin: 50px 10px 0;
+    padding: 10px 0;
+    text-align: center;
+}
+.prodheader .name {
+    font-size: 1.5em;
+}
+.prodheader> .subhead {
+    font-size: .6em;
+}
+.none {
+    color: #777;
+}
+
+table.pretty {
+  margin: auto auto;
+  background: whitesmoke;
+  border-collapse: collapse;
+  border-style: solid;
+  border-color: blue;
+}
+table.pretty th, table.pretty td {
+  border: 1px gainsboro solid;
+  padding: 0.2em;
+}
+table.pretty th {
+  background: gainsboro;
+  text-align: left;
+}
+table.pretty tr:hover td {
+    background: #e8d3de;
+    cursor: pointer;
+}
+table.pretty tr:nth-child(odd) td {
+    background: #ebebeb;
+    cursor: pointer;
+}
+table.pretty tr:nth-child(odd):hover td {
+    background: #e8d3d3;
+}
+table.pretty caption {
+  margin-left: inherit;
+  margin-right: inherit;
+}
