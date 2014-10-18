@@ -16,11 +16,11 @@
 <template name="productList">
   <table class="table table-striped table-bordered pretty" id="productList_table">
     <caption>
-      <h1>Regular Inventory</h1>
+      <h1>Inventory</h1>
     </caption>
     <thead>
     <tr>
-      <th scope="col">NDC number</th>
+      <th scope="col">product number</th>
       <th scope="col">Description</th>
       <th scope="col">Last Quantity</th>
       <th scope="col">Current Quantity</th>
@@ -40,13 +40,12 @@
     <div class="prodheader">
       <span class="name">{{selected_item.desc}}</span>
       <div class="subhead">
-        NDC: {{selected_item.NDC}}
+        Number: {{selected_item.prodID}}
       </div>
       <div class="subhead">
         Remaining qty: {{selected_item.curQty}}
       </div>
     </div>
-    <button id=toggleAddForm class="btn btn-primary">Add row</button>
   </div>
   {{else}}
   <div class="none">Click a product to see details</div>
@@ -61,12 +60,10 @@
       <tr>
         <th scope="col">Entered by</th>
         <th scope="col">Entered on</th>
-        <th scope="col">Rx #</th>
+        <th scope="col">Doc #</th>
         <th scope="col">Quantity</th>
         <th scope="col">Current #</th>
         <th scope="col">Transaction date</th>
-        <th scope="col">Verified by</th>
-        <th scope="col">Verified on</th>
       </tr>
       </thead>
       <tbody>
@@ -81,32 +78,30 @@
 
 <template name="productRow">
   <tr class=" {{selected}}">
-    <td class="NDC">{{NDC}}</td>
-    <td class="desc">{{desc}}</td>
-    <td class="text-right">{{lastQty}}</td>
-    <td class="text-right">{{curQty}}</td>
+    <td >{{prodID}}</td>
+    <td >{{desc}}</td>
+    <td >{{lastQty}}</td>
+    <td >{{curQty}}</td>
   </tr>
 </template>
 
 <template name="trxRow">
   <tr>
-    <td class="left">{{enteredBy}}</td>
-    <td class="left">{{enteredOn.toLocaleString}}</td>
-    <td class="left">{{rx}}</td>
-    <td class="text-right">{{qty}}</td>
-    <td class="text-right">{{curqty}}</td>
-    <td class="left">{{trxDate.toLocaleDateString}}</td>
-    <td class="left">{{verifiedBy}}</td>
-    <td class="left">{{verifiedOn.toLocaleString}}</td>
+    <td >{{enteredBy}}</td>
+    <td >{{enteredOn.toLocaleString}}</td>
+    <td >{{docno}}</td>
+    <td >{{qty}}</td>
+    <td >{{curqty}}</td>
+    <td >{{trxDate.toLocaleDateString}}</td>
   </tr>
 </template>
 
 <template name="insertTrx">
-  <div id=inputForm class="hidden form-inline">
-    <!--{{> quickForm collection="transactions" id="insertTrxForm" type="insert"  label-class="col-md-2" buttonContent="Log This" fields="rx, qty, enteredBy, trxDate" doc=defaultDoc}}-->
-    {{#autoForm collection="transactions" id="insertTrxForm" type="insert" doc=defaultDoc}}
+  <div id=inputForm class=" form-inline">
+    <!--{{> quickForm collection="transactions" id="insertTrxForm" type="insert"  label-class="col-md-2" buttonContent="Log This" fields="docno, qty, enteredBy, trxDate" doc=defaultDoc}}-->
+    {{#autoForm collection="transactions" id="insertTrxForm" type="insert"}}
     <fieldset>
-      {{> afQuickField name="rx" autofocus=""}}
+      {{> afQuickField name="docno" autofocus=""}}
       {{> afQuickField name="qty"}}
       {{> afQuickField name="enteredBy" value=current_name}}
       {{> afQuickField name="trxDate" value=current_day}}

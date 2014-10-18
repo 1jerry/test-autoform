@@ -11,64 +11,56 @@ function default2now() {
     }
 }
 transactions.attachSchema(new SimpleSchema({
-    NDC: {type:String
+    prodID: {type:String
         ,autoform: {omit: true}
     },
     trxDate: {type:Date },
     enteredOn: {type:Date, autoValue:default2now, optional: true
         ,autoform: {omit: true}
     },
-    verifiedOn: {type:Date, optional:true
-        ,autoform: {omit: true}
-    },
-    rx: { type: String },
+    docno: { type: String },
     qty: {type:Number,min:1},
     curqty: {type:Number, optional:true},
-    enteredBy: {type:String},
-    verifiedBy: {type:String, optional:true}
+    enteredBy: {type:String}
 }));
 
 function fn_productsDefault() {return [
     {
-        NDC:"11",
-        desc:"Syhphis Nexum",
+        prodID:"11",
+        desc:"Thing A",
         lastQty:100
     },    {
-        NDC:"12",
-        desc:"Xano Charm Pro",
+        prodID:"12",
+        desc:"Thing B",
         lastQty:100
     },    {
-        NDC:"13",
-        desc:"Fixum Upum",
+        prodID:"13",
+        desc:"Widget",
         lastQty:100
     },    {
-        NDC:"14",
-        desc:"Mayor Libre Plus",
+        prodID:"14",
+        desc:"Spam, spam, spam",
         lastQty:100
     },    {
-        NDC:"15",
-        desc:"Weedus Smokumaxium",
+        prodID:"15",
+        desc:"The unnamed",
         lastQty:100
     }
     ]}
 
 function fn_trx_testdata() {return [
         {   trxDate: moment("10/01/2014 10:01").toDate()
-            ,rx:"10010"
+            ,docno:"10010"
             ,qty:10
             ,curqty:0
             ,enteredBy:"Steve Smith"
             ,enteredOn: moment("10/01/2014 10:02").toDate()
-            ,verifiedBy: "Mike Gilbert"
-            ,verifiedOn: moment("10/01/2014 10:11").toDate()
         },{ trxDate: moment("10/01/2014 12:01").toDate()
-            ,rx:"10012"
+            ,docno:"10012"
             ,qty:11
             ,curqty:0
             ,enteredBy:"Steve Smith"
             ,enteredOn: moment("10/01/2014 12:12").toDate()
-            ,verifiedBy: "Mike Gilbert"
-            ,verifiedOn: moment("10/01/2014 12:13").toDate()
         }
     ]}
 
@@ -79,37 +71,26 @@ if (Meteor.isClient) {
         Session.set('selected_product',"")
         Session.set('current_name',"")
     });
-    reset_form = function () {
-        // sb global
-        if($('#inputForm')) $('#inputForm').addClass('hidden');
-        if($("#toggleAddForm"))$("#toggleAddForm").addClass('btn-primary');
-//        AutoForm.resetForm("insertTrxForm")
-    };
+
     Template.productList.products = function () {
         return products.find({}, {sort: {CDC: 1}})
     };
     //noinspection JSUnusedGlobalSymbols
     Template.trxList.helpers({
         trx: function() {
-            var product = products.findOne({NDC: Session.get("selected_product")});
+            var product = products.findOne({prodID: Session.get("selected_product")});
             if (product) {
-                return transactions.find({NDC: product.NDC}, {sort: {enteredOn: -1}});
+                return transactions.find({prodID: product.prodID}, {sort: {enteredOn: -1}});
             } else {
                 return []
             }
         },
         selected_item: function () {
-            var item =  products.findOne({NDC:Session.get("selected_product")});
+            var item =  products.findOne({prodID:Session.get("selected_product")});
             if(item) item.curQty = Session.get('curQty');
             return item;
         }
     });
-    Template.trxList.events({
-        'click #toggleAddForm': function () {
-            $('#inputForm').toggleClass('hidden');
-            $("#toggleAddForm").toggleClass('btn-primary')
-        }
-    })
     //noinspection JSUnusedGlobalSymbols
     Template.insertTrx.helpers({
         current_name: function() {
@@ -129,10 +110,10 @@ if (Meteor.isClient) {
     //noinspection JSUnusedGlobalSymbols
     Template.productRow.helpers({
         selected: function () {
-            return Session.equals("selected_product", this.NDC) ? "selected" : '';
+            return Session.equals("selected_product", this.prodID) ? "selected" : '';
         },
         curQty: function() {
-            var trxs = transactions.find({NDC:this.NDC}) ;
+            var trxs = transactions.find({prodID:this.prodID}) ;
             var changes = _.reduce(trxs.fetch(), function(o,n){ return o + n.qty;},0);
             return this.lastQty - changes
         }
@@ -146,23 +127,13 @@ if (Meteor.isClient) {
 
     Template.productList.events({
         'click tr': function (e,t) {
-            if (Session.get("selected_product") == this.NDC) {
+            if (Session.get("selected_product") == this.prodID) {
                 Session.set("selected_product", "");
-                $("#transactions_section").slideUp(600);
             } else {
-                Session.set("selected_product", this.NDC);
+                Session.set("selected_product", this.prodID);
                 Session.set('curQty', $('td:last',e.currentTarget)[0].innerText);
-                if (0) {
-                    console.log('this: ', this);
-                    console.log('template.data: ', t.data);
-                    console.log('e.currentTarget: ', e.currentTarget);
-                    console.log('set from DOM: ', $('td:last', e.currentTarget)[0].innerText);
-                }
-                $("#transactions_section").slideUp(600);
-                $("#transactions_section").slideDown(600);
-                $('body').animate({scrollTop: $(document).height()})
+                console.log('template = ',t)
             }
-            reset_form();
         }
     });
 
@@ -172,7 +143,7 @@ if (Meteor.isClient) {
             before: {
                 insert: function( doc, template) {
 //                    console.info('default doc: ',doc);
-                    doc.NDC = Session.get("selected_product") || "[missing]";
+                    doc.prodID = Session.get("selected_product") || "[missing]";
                     doc.curqty = Session.get('curQty') - doc.qty
                     mdate = moment(doc.trxDate)
                     doc.trxDate = mdate.add(mdate.zone(), 'm').toDate()  //adjust TZ
@@ -186,9 +157,7 @@ if (Meteor.isClient) {
                     if (error) {
                         console.log("Insert Error:", error);
                     } else {
-                        Session.set('selected_product', "");
-                        $("#transactions_section").slideUp(600);
-                        reset_form();
+                        console.log("record added:", result);
                     }
 
                 }
@@ -214,7 +183,7 @@ if (Meteor.isServer) {
                 for (var j = 0; j< trx_testdata.length; j++) {
                     trx_testdata[j]['company'] = '';
                     trx_testdata[j]['branch'] = '';
-                    trx_testdata[j]['NDC'] = productsDefault[i]['NDC']
+                    trx_testdata[j]['prodID'] = productsDefault[i]['prodID']
                     trx_testdata[j]['qty'] =  qty = Math.max(1,Math.floor(Math.random()*10))
                     wqty -= qty;
                     trx_testdata[j].curqty = wqty;
